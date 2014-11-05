@@ -1,0 +1,48 @@
+<project name="HouseKeeper" basedir="." default="clean-build">
+
+    <property name="src.dir"     	value="src"/>
+
+    <property name="build.dir"   	value="build"/>
+    <property name="classes.dir" 	value="${build.dir}/classes"/>
+    <property name="lib.dir" 		value="lib"/>
+    <property name="res.dir" 		value="res"/>
+	<property name="conf.dir" 		value="conf"/>
+    <property name="jar.dir"     	value="jar"/>
+
+    <property name="main-class"  	value="com.alarme.app.Alarme"/>
+
+
+
+    <target name="clean">
+        <delete dir="${jar.dir}"/>
+    </target>
+
+    <!--target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+    </target-->
+
+    <target name="jar">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+            <fileset dir="${classes.dir}" includes="**/*.class" />
+        	<fileset dir="${conf.dir}" includes="**" />
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+        </jar>
+    	<copy todir="${jar.dir}/${res.dir}">
+    		<fileset dir="${res.dir}"/>
+    	</copy>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+
+    <target name="main" depends="clean,run"/>
+
+</project>

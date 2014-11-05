@@ -1,0 +1,25 @@
+# This file MUST be encoded in ISO-8859-1
+
+sensor.0=ENTRY, Porte d'entree
+sensor.1=WINDOW, Fenetre Cuisine
+sensor.3=WINDOW, Fenetre Sejour gauche
+sensor.4=WINDOW, Fenetre Sejour droite
+
+
+mail.recipients=xxx, yyy
+
+
+# Comment the next line to disable e-mail & SMS support
+mail.smtp.user=xxx
+
+# enableSMS=1 to enable ; 0 to disable with mail support
+enableSMS=1
+
+mail.smtp.pass=xxx
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+mail.smtp.host=smtp.gmail.com
+mail.smtp.port=587
+
+google.client.id=xxx
+google.client.secret=xxx
