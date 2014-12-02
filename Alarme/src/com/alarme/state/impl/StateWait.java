@@ -73,6 +73,7 @@ public class StateWait extends AbstractState {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
+			// NOP
 		}
 		getIoManager().setAlarm(false);
 		Signal.ALARME_INTRUSION.stop();
@@ -177,7 +178,7 @@ public class StateWait extends AbstractState {
 //					if (bAlarmIso)
 //						Signal.ALARME_INCENDIE.loop();
 //					else
-//						Signal.ALARME_INCENDIE.stop();
+//						Signal.ALARME_INCENDIE.stopThread();
 //				}
 
 				// "*q# -> shutdown (dev only, impossible on real keyboard)

@@ -12,15 +12,14 @@
     <property name="main-class"  	value="com.alarme.app.Alarme"/>
 
 
-
     <target name="clean">
         <delete dir="${jar.dir}"/>
     </target>
 
-    <!--target name="compile">
-        <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}"/>
-    </target-->
+    <!--<target name="compile">-->
+        <!--<mkdir dir="${classes.dir}"/>-->
+        <!--<javac srcdir="${src.dir}" destdir="${classes.dir}" classpath="${lib.dir}"/>-->
+    <!--</target>-->
 
     <target name="jar">
         <mkdir dir="${jar.dir}"/>

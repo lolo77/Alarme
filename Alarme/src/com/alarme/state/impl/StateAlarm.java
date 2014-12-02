@@ -66,7 +66,7 @@ public class StateAlarm extends AbstractState {
 	@Override
 	public void stop() {
 		super.stop();
-		// Signal.ALARME_INTRUSION.stop();
+		// Signal.ALARME_INTRUSION.stopThread();
 
 		IIoManager io = getIoManager();
 		io.setAlarm(false);

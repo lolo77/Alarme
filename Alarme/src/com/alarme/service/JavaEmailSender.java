@@ -61,15 +61,10 @@ public class JavaEmailSender {
 	
 	/**
 	 * 
-	 * @param emailAddressTo
-	 * @param msgSubject
-	 * @param msgText
-	 * @param files
+	 * @param msg
 	 * @throws MessagingException
-	 * @throws AddressException
 	 */
-	public void sendEmailMessage(MessageContent msg) throws AddressException,
-			MessagingException {
+	public void sendEmailMessage(MessageContent msg) throws MessagingException {
 
 		Properties propsConfig = ConfigRepository.getInstance().getProperties();
 
@@ -137,10 +132,9 @@ public class JavaEmailSender {
 		for (String file : msg.getFiles()) {
 			// Part two is attachment
 			messageBodyPart = new MimeBodyPart();
-			String filename = file;
 			DataSource source = new FileDataSource(file);
 			messageBodyPart.setDataHandler(new DataHandler(source));
-			File f = new File(filename);
+			File f = new File(file);
 			messageBodyPart.setFileName(f.getName());
 			multipart.addBodyPart(messageBodyPart);
 		}

@@ -55,7 +55,7 @@ public class StateRun extends AbstractState {
 //			Signal.BIP.loop();
 		}
 		else {
-//			Signal.BIP.stop();
+//			Signal.BIP.stopThread();
 		}
 	}
 

@@ -325,8 +325,8 @@ public class AdminManager implements Runnable {
 //			Thread.sleep(15000);
 //		} catch (InterruptedException e) {
 //		}
-//		m.stop();
-//		log.debug("stop");
-//		MessageQueue.getInstance().stop();
+//		m.stopThread();
+//		log.debug("stopThread");
+//		MessageQueue.getInstance().stopThread();
 	}
 }

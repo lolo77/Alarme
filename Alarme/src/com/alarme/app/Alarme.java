@@ -28,9 +28,6 @@ public class Alarme {
 	/**
 	 * 
 	 * @param args
-	 * @throws UnsupportedAudioFileException
-	 * @throws IOException
-	 * @throws LineUnavailableException
 	 */
 	public static void main(String[] args) {
 		
@@ -72,13 +69,8 @@ public class Alarme {
 
 		AdminManager.getInstance().stop();
 		MessageQueue.getInstance().createAndPushMessage("Systeme d'alarme arrete", "Thread terminated.", EMedia.EMAIL);
+		MessageQueue.getInstance().flush();
+		MessageQueue.getInstance().stopThread();
 		log.debug("Thread terminated.");
-		// Let the time to send the message (10s)
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// NOP
-		}
-		MessageQueue.getInstance().stop();
 	}
 }

@@ -37,7 +37,7 @@ public abstract class AbstractState implements IState {
 
 	@Override
 	public void stop() {
-		log.debug("stop : " + this);
+		log.debug("stopThread : " + this);
 		// Idle
 	}
 
