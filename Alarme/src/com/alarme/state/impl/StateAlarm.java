@@ -1,5 +1,6 @@
 package com.alarme.state.impl;
 
+import com.alarme.service.Signal;
 import org.apache.log4j.Logger;
 
 import com.alarme.core.conf.Sensor;
@@ -66,7 +67,7 @@ public class StateAlarm extends AbstractState {
 	@Override
 	public void stop() {
 		super.stop();
-		// Signal.ALARME_INTRUSION.stopThread();
+//		Signal.ALARME_INTRUSION.stop();
 
 		IIoManager io = getIoManager();
 		io.setAlarm(false);

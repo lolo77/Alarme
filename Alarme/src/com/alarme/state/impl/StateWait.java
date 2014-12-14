@@ -68,15 +68,15 @@ public class StateWait extends AbstractState {
 	 */
 	private void signalSirene() {
 		log.info("signalSirene");
-		Signal.ALARME_INTRUSION.start();
+//		Signal.ALARME_INTRUSION.start();
 		getIoManager().setAlarm(true);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			// NOP
 		}
 		getIoManager().setAlarm(false);
-		Signal.ALARME_INTRUSION.stop();
+//		Signal.ALARME_INTRUSION.stop();
 	}
 
 	/**

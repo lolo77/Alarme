@@ -416,6 +416,7 @@ public class IoManagerRpi implements IIoManager {
 	@Override
 	public void setAlarm(boolean enable) {
 		bAlarm = enable;
+		log.info("Alarm enable : " + enable);
 		final GpioController gpio = GpioFactory.getInstance();
 
 		// Output Alarm signal (direct)
