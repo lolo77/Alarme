@@ -345,16 +345,14 @@ public class MessageQueue implements Runnable {
      * @param msgText
      * @param files
      */
-    public boolean createAndPushMessage(String msgSubject, String msgText,
+    public void createAndPushMessage(String msgSubject, String msgText,
                                         EMedia media, String... files) {
         log.debug("createAndPushMessage");
         ConfigRepository conf = ConfigRepository.getInstance();
-        boolean bSent = createAndPushMessageTo(conf.getProperties()
+        createAndPushMessageTo(conf.getProperties()
                         .getProperty(ConfigRepository.KEY_MAIL_RECIPIENTS), msgSubject + " " + ip + " ",
                 msgText, media, files);
         log.debug("createAndPushMessage END");
-
-        return bSent;
     }
 
     /**
@@ -363,17 +361,15 @@ public class MessageQueue implements Runnable {
      * @param msgText
      * @param files
      */
-    public boolean createAndPushMessageTo(String emailAddressTo,
+    public void createAndPushMessageTo(String emailAddressTo,
                                           String msgSubject, String msgText, EMedia media, String... files) {
         log.debug("createAndPushMessageTo");
 
-        boolean bSent = false;
         MessageContent msg = new MessageContent(emailAddressTo, msgSubject,
                 msgText, files, System.currentTimeMillis(), media);
         pushMessage(msg);
 
         log.debug("createAndPushMessageTo END");
-        return bSent;
     }
 
     /**

@@ -64,14 +64,14 @@ public class StateWait extends AbstractState {
 	}
 
 	/**
-	 * Test sirène (pendant 0.1s)
+	 * Test sirène (pendant 1s)
 	 */
 	private void signalSirene() {
 		log.info("signalSirene");
 		Signal.ALARME_INTRUSION.start();
 		getIoManager().setAlarm(true);
 		try {
-			Thread.sleep(100);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// NOP
 		}
@@ -160,15 +160,10 @@ public class StateWait extends AbstractState {
 
 				// "*4#" Send log.txt by email
 				if (input.equals("4")) {
-					boolean bSent = MessageQueue.getInstance()
+					MessageQueue.getInstance()
 							.createAndPushMessage("log", "", EMedia.EMAIL,
 									"log.txt");
-					//
-					if (bSent) {
-						Signal.BIPBIP_1320.start();
-					} else {
-						Signal.BIP440.start();
-					}
+					Signal.BIPBIP_1320.start();
 				}
 				
 //				// "*5#" Toggle AlarmIso
