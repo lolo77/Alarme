@@ -1,8 +1,6 @@
 package com.alarme.state.impl;
 
-import com.alarme.service.Signal;
-import org.apache.log4j.Logger;
-
+import com.alarme.core.conf.ConfigRepository;
 import com.alarme.core.conf.Sensor;
 import com.alarme.core.conf.SensorRepository;
 import com.alarme.core.io.IIoManager;
@@ -10,6 +8,7 @@ import com.alarme.service.MessageQueue;
 import com.alarme.service.MessageQueue.EMedia;
 import com.alarme.state.AbstractState;
 import com.alarme.state.factory.EState;
+import org.apache.log4j.Logger;
 
 /**
  * 
@@ -56,7 +55,7 @@ public class StateAlarm extends AbstractState {
 
 		// Send message
 		MessageQueue sender = MessageQueue.getInstance();
-		sender.createAndPushMessage("Intrusion detectee, sirene activee", s,
+		sender.createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Intrusion detectee, sirene activee", s,
 				EMedia.BOTH);
 
 		// Start video capture
@@ -86,7 +85,7 @@ public class StateAlarm extends AbstractState {
 
 			// Send message
 			MessageQueue sender = MessageQueue.getInstance();
-			sender.createAndPushMessage("Sirene desactivee apres delai", "", EMedia.BOTH);
+			sender.createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Sirene desactivee apres delai", "", EMedia.BOTH);
 		}
 
 		//
@@ -96,7 +95,7 @@ public class StateAlarm extends AbstractState {
 
 			// Send message
 			MessageQueue sender = MessageQueue.getInstance();
-			sender.createAndPushMessage((bHalfVol) ? "Code secret saisi" : "Sirene desactivee manuellement", "", EMedia.BOTH);
+			sender.createAndPushMessage(ConfigRepository.getInstance().getRecipients(), (bHalfVol) ? "Code secret saisi" : "Sirene desactivee manuellement", "", EMedia.BOTH);
 		}
 	}
 

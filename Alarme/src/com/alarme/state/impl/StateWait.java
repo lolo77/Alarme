@@ -1,5 +1,6 @@
 package com.alarme.state.impl;
 
+import com.alarme.core.conf.ConfigRepository;
 import org.apache.log4j.Logger;
 
 import com.alarme.core.conf.DataRepository;
@@ -161,7 +162,7 @@ public class StateWait extends AbstractState {
 				// "*4#" Send log.txt by email
 				if (input.equals("4")) {
 					MessageQueue.getInstance()
-							.createAndPushMessage("log", "", EMedia.EMAIL,
+							.createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "log", "", EMedia.EMAIL,
 									"log.txt");
 					Signal.BIPBIP_1320.start();
 				}

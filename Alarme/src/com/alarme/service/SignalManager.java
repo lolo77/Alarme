@@ -1,12 +1,11 @@
 package com.alarme.service;
 
+import com.alarme.core.io.IIoManager;
+import org.apache.log4j.Logger;
+
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineEvent.Type;
 import javax.sound.sampled.LineListener;
-
-import org.apache.log4j.Logger;
-
-import com.alarme.core.io.IIoManager;
 
 
 /**

@@ -1,18 +1,18 @@
 package com.alarme.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
+import com.alarme.core.conf.ConfigRepository;
 import com.alarme.core.io.IIoManager;
 import com.alarme.core.io.NetWatchDog;
-import com.alarme.core.io.impl.IoManagerRpi;
+import com.alarme.core.io.impl.IoManagerEmul;
 import com.alarme.service.MessageQueue;
 import com.alarme.service.MessageQueue.EMedia;
 import com.alarme.state.IState;
 import com.alarme.state.factory.EState;
 import com.alarme.state.factory.StateFactory;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -24,9 +24,9 @@ public class StateMachine implements IStateMachine {
 
 	private static final Logger log = Logger.getLogger(StateMachine.class);
 	
-	private IIoManager		ioManager       = new IoManagerRpi();
+	private IIoManager		ioManager       = new IoManagerEmul();
 	
-	private List<IState>	lstStates		= new ArrayList<IState>();
+	private List<IState>	lstStates		= new ArrayList<>();
 	private IState			currentState;
 	private Boolean			oldConnected	= null;
 
@@ -85,7 +85,7 @@ public class StateMachine implements IStateMachine {
 		
 		// To allow add / remove while iterating over the collection (changes
 		// will take effect at the next run cycle)
-		List<IState> backList = new ArrayList<IState>(lstStates.size());
+		List<IState> backList = new ArrayList<>(lstStates.size());
 		backList.addAll(lstStates);
 		//
 		for (IState state : backList) {
@@ -107,14 +107,14 @@ public class StateMachine implements IStateMachine {
 		if (oldConnected != null) {
 			//
 			if ((oldConnected) && (!bConnected)) {
-				MessageQueue.getInstance().createAndPushMessage(
+				MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(),
 						"Panne reseau Internet", "", EMedia.BOTH);
 			}
 			//
 			if ((!oldConnected) && (bConnected)) {
 				// IP address may have changed
 				MessageQueue.getInstance().detectIpAddress();
-				MessageQueue.getInstance().createAndPushMessage(
+				MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(),
 						"Retour reseau Internet", "", EMedia.BOTH);
 			}
 		}
@@ -136,7 +136,9 @@ public class StateMachine implements IStateMachine {
 			try {
 				Thread.sleep(ioManager.getRunPeriodDuration() - timeDelta);
 			}
-			catch (InterruptedException e) {}
+			catch (InterruptedException e) {
+				//
+			}
 		}
 	}
 

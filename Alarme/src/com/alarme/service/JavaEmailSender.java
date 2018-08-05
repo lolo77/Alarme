@@ -1,30 +1,22 @@
 package com.alarme.service;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
+import com.alarme.core.conf.ConfigRepository;
+import com.alarme.core.conf.RecipientInfo;
+import com.alarme.service.MessageQueue.MessageContent;
+import org.apache.log4j.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import org.apache.log4j.Logger;
-
-import com.alarme.core.conf.ConfigRepository;
-import com.alarme.service.MessageQueue.MessageContent;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;
 
 
 /**
@@ -102,12 +94,10 @@ public class JavaEmailSender {
 		// Set From: header field of the header.
 		message.setFrom(new InternetAddress("raspi"));
 
-		// Set To: header field of the header.
-		String[] recipients = msg.getEmailAddressTo().split(",");
 		//
-		for (String dest : recipients) {
+		for (RecipientInfo r : msg.getRecipients()) {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
-					dest.trim()));
+					r.getEmail().trim()));
 		}
 
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

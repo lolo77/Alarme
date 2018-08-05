@@ -70,7 +70,7 @@ public class StatePreRun extends AbstractState {
 			if ((!ioManager.isOpenWin()) && (openWin)) {
 				openWin = false;
 				openWinSignal.stop();
-				log.debug("All windows are close");
+				log.debug("All windows are closed");
 			}
 			//
 			if ((ioManager.isOpenDoor()) && (!openDoor)) {
@@ -80,7 +80,7 @@ public class StatePreRun extends AbstractState {
 			//
 			if ((!ioManager.isOpenDoor()) && (openDoor)) {
 				openDoor = false;
-				log.debug("All doors are close");
+				log.debug("All doors are closed");
 			}
 			//
 			if ((ioManager.isOpenDoor()) || (ioManager.isOpenWin())) {

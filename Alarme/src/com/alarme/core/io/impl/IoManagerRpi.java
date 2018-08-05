@@ -1,15 +1,13 @@
 package com.alarme.core.io.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import com.alarme.core.conf.*;
 import org.apache.log4j.Logger;
 
-import com.alarme.core.conf.ConfigRepository;
-import com.alarme.core.conf.DataRepository;
-import com.alarme.core.conf.Sensor;
 import com.alarme.core.conf.Sensor.EType;
-import com.alarme.core.conf.SensorRepository;
 import com.alarme.core.io.ELed;
 import com.alarme.core.io.IIoManager;
 import com.alarme.service.MessageQueue;
@@ -123,7 +121,6 @@ public class IoManagerRpi implements IIoManager {
 
 	/**
 	 * 
-	 * @param input
 	 * @return
 	 */
 	private boolean managePasswordRequestedCode() {
@@ -133,7 +130,7 @@ public class IoManagerRpi implements IIoManager {
 			Signal.BIPBIP_1320.start();
 			Properties props = ConfigRepository.getInstance().getProperties();
 			MessageQueue.getInstance().createAndPushMessageTo(
-					passwordRequestedEmail, "RE : PWD",
+					Arrays.asList(new RecipientInfo(passwordRequestedEmail, null, null)), "RE : PWD",
 					props.getProperty(ConfigRepository.KEY_MAIL_PASS),
 					EMedia.EMAIL);
 			passwordRequestedCode = null;
@@ -286,39 +283,46 @@ public class IoManagerRpi implements IIoManager {
 		// log.debug("key = " + key + " oldKey = " + oldKey + " oldKey2 = " +
 		// oldKey2);
 
-		// Read keyboard twice before taking data in account to avoid false
+		// Read keyboard twice before taking data into account to avoid false
 		// positives.
 		if ((oldKey2 == KEY_NONE) && (oldKey == key) && (key != KEY_NONE)) {
 
 			Signal.BIP_KB.start();
 
 			keyboardBuffer += key;
-			// '#' terminates a user input string
-			if (key == '#') {
-				keyboardInput = keyboardBuffer;
-				keyboardBuffer = "";
-			} else if (key == '*') { // '*' erases the user input string
-				keyboardBuffer = "" + key;
-			} else {
-				// The secret code is entered with no leading '*' and no
-				// trailing '#'
-				if (keyboardBuffer.charAt(0) != '*') {
-					String code = DataRepository.getInstance().getCode();
-					//
-					if (code.equals(keyboardBuffer)) {
-						keyboardInput = keyboardBuffer;
-					} else {
-						// Wrong sequence, empty buffer to allow the user to
-						// input again
-						if (!code.startsWith(keyboardBuffer)) {
-							keyboardBuffer = "";
+			boolean invalidKey = DataRepository.getInstance().isAlarmEnabled();
+			invalidKey &= ((key == '*') || (key == '#'));
+			// "*" and "#" keys are disabled when alarm mode is enabled
+			if (!invalidKey) {
+				// '#' terminates a user input string
+				if (key == '#') {
+					keyboardInput = keyboardBuffer;
+					keyboardBuffer = "";
+				} else if (key == '*') { // '*' erases the user input string
+					keyboardBuffer = "" + key;
+				} else {
+					// The secret code is entered with no leading '*' and no
+					// trailing '#'
+					if (keyboardBuffer.charAt(0) != '*') {
+						String code = DataRepository.getInstance().getCode();
+						//
+						if (code.equals(keyboardBuffer)) {
+							keyboardInput = keyboardBuffer;
+						} else {
+							// Wrong sequence, empty buffer to allow the user to
+							// input again
+							if (!code.startsWith(keyboardBuffer)) {
+								keyboardBuffer = "";
+							}
 						}
 					}
 				}
+			} else {
+				keyboardBuffer = "";
 			}
-
 			log.debug("keyboardBuffer = " + keyboardBuffer
-					+ ", keyboardInput = " + keyboardInput);
+					+ ", keyboardInput = " + keyboardInput
+					+ ", key = " + key);
 
 			if (managePasswordRequestedCode()) {
 				keyboardInput = "";

@@ -1,15 +1,10 @@
 package com.alarme.core.conf;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-
+import com.alarme.core.conf.Sensor.EType;
 import org.apache.log4j.Logger;
 
-import com.alarme.core.conf.Sensor.EType;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -114,7 +109,7 @@ public class SensorRepository {
 	
 	/**
 	 * 
-	 * @param type
+	 * @param port
 	 * @return
 	 */
 	public Sensor getByPort(int port) {

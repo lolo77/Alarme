@@ -1,25 +1,15 @@
 package com.alarme.service;
 
+import com.alarme.core.conf.ConfigRepository;
+import com.alarme.core.conf.RecipientInfo;
+import org.apache.log4j.Logger;
+
+import javax.mail.*;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.search.FlagTerm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.FetchProfile;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.search.FlagTerm;
-
-import org.apache.log4j.Logger;
-
-import com.alarme.core.conf.ConfigRepository;
 
 /**
  * Acces IMAP au serveur GMAIL
@@ -296,11 +286,8 @@ public class JavaEmailReader {
 	private List<String> getAllowedSenders() {
 		List<String> out = new ArrayList<String>();
 
-		Properties props = ConfigRepository.getInstance().getProperties();
-		String allowedSenders = props.getProperty(ConfigRepository.KEY_MAIL_RECIPIENTS);
-		String[] tab = allowedSenders.split(",");
-		
-		for (String s : tab) {
+		for (RecipientInfo r : ConfigRepository.getInstance().getRecipients()) {
+			String s = r.getEmail();
 			s = s.toLowerCase();
 			s = s.trim();
 			out.add(s);

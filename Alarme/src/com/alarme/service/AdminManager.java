@@ -1,19 +1,20 @@
 package com.alarme.service;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.log4j.Logger;
-
 import com.alarme.core.conf.ConfigRepository;
+import com.alarme.core.conf.RecipientInfo;
 import com.alarme.core.conf.Sensor;
 import com.alarme.core.conf.SensorRepository;
 import com.alarme.core.io.IIoManager;
 import com.alarme.service.MessageQueue.EMedia;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * 
@@ -130,6 +131,11 @@ public class AdminManager implements Runnable {
 	 */
 	private void manageAction(String sender, String action, String params) {
 		log.debug("manageAction : sender = " + sender + ", action = " + action + ", params = " + params);
+		RecipientInfo senderUser = ConfigRepository.getInstance().getRecipientInfoByEmail(sender);
+		if (senderUser == null) {
+			log.warn("Sender " + sender + " not recognized as regular user for action " + action);
+			return;
+		}
 		Properties p = new Properties();
 		try {
 			p.load(new StringReader(params));
@@ -151,7 +157,7 @@ public class AdminManager implements Runnable {
 		else {
 			// Send help message
 			Properties props = ConfigRepository.getInstance().getProperties();
-			MessageQueue.getInstance().createAndPushMessageTo(props.getProperty(ConfigRepository.KEY_MAIL_RECIPIENTS), "Mode d'emploi", "Vous trouverez ci-joint le descriptif de votre système d'alarme.", EMedia.EMAIL, "res/alarme.pdf");
+			MessageQueue.getInstance().createAndPushMessageTo(Arrays.asList(senderUser), "Mode d'emploi", "Vous trouverez ci-joint le descriptif de votre système d'alarme.", EMedia.EMAIL, "res/alarme.pdf");
 		}
 	}
 
@@ -161,6 +167,13 @@ public class AdminManager implements Runnable {
 	 * @param p
 	 */
 	private void managePassword(String sender, Properties p) {
+
+		RecipientInfo senderUser = ConfigRepository.getInstance().getRecipientInfoByEmail(sender);
+		if (senderUser == null) {
+			log.warn("Sender " + sender + " not recognized as regular user for action managePassword.");
+			return;
+		}
+
 		Properties props = ConfigRepository.getInstance().getProperties();
 
 		String sOld = p.getProperty(AdminActions.Password.PARAM_OLD);
@@ -183,7 +196,7 @@ public class AdminManager implements Runnable {
 		if (sLost != null) {
 			log.debug("PWD : sending pass");
 			String code = ioManager.computePasswordRequestedCode(sender);
-			MessageQueue.getInstance().createAndPushMessageTo(sender, "RE : PWD", "Saisissez le code suivant sur le clavier du système d'alarme : " + code, EMedia.EMAIL);
+			MessageQueue.getInstance().createAndPushMessageTo(Arrays.asList(senderUser), "RE : PWD", "Saisissez le code suivant sur le clavier du système d'alarme : " + code, EMedia.EMAIL);
 		}
 	}
 
@@ -193,6 +206,12 @@ public class AdminManager implements Runnable {
 	 * @param p
 	 */
 	private void manageEmail(String sender, Properties p) {
+		RecipientInfo senderUser = ConfigRepository.getInstance().getRecipientInfoByEmail(sender);
+		if (senderUser == null) {
+			log.warn("Sender " + sender + " not recognized as regular user for action manageEmail.");
+			return;
+		}
+/*
 		Properties props = ConfigRepository.getInstance().getProperties();
 
 		String sAdd = p.getProperty(AdminActions.Email.PARAM_ADD);
@@ -263,6 +282,7 @@ public class AdminManager implements Runnable {
 			MessageQueue.getInstance().createAndPushMessageTo(sender, "RE : EMAIL", cur,
 					EMedia.EMAIL);
 		}
+*/
 	}
 
 	/**
@@ -271,6 +291,12 @@ public class AdminManager implements Runnable {
 	 * @param p
 	 */
 	private void manageAdmin(String sender, Properties p) {
+
+		RecipientInfo senderUser = ConfigRepository.getInstance().getRecipientInfoByEmail(sender);
+		if (senderUser == null) {
+			log.warn("Sender " + sender + " not recognized as regular user for action manageAdmin.");
+			return;
+		}
 
 		String sQuiet = p.getProperty(AdminActions.Admin.PARAM_QUIET);
 		String sLogs = p.getProperty(AdminActions.Admin.PARAM_LOGS);
@@ -283,7 +309,7 @@ public class AdminManager implements Runnable {
 
 		if (sLogs != null) {
 			log.info("Sending logs");
-			MessageQueue.getInstance().createAndPushMessageTo(sender, "RE : ADMIN", "",
+			MessageQueue.getInstance().createAndPushMessageTo(Arrays.asList(senderUser), "RE : ADMIN", "",
 					EMedia.EMAIL, "log.txt");
 		}
 
@@ -304,7 +330,7 @@ public class AdminManager implements Runnable {
 					s += "\n";
 				}
 			}
-			MessageQueue.getInstance().createAndPushMessageTo(sender, "RE : ADMIN", s,
+			MessageQueue.getInstance().createAndPushMessageTo(Arrays.asList(senderUser), "RE : ADMIN", s,
 					EMedia.EMAIL);
 		}
 	}
@@ -321,6 +347,11 @@ public class AdminManager implements Runnable {
 		String s = "*" + String
 				.valueOf((int) (Math.random() * 9000 + 1000)) + "#";
 		log.debug("s = "  + s);
+		try {
+			log.debug("URL Encode = " + URLEncoder.encode("été", "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+
+		}
 //		try {
 //			Thread.sleep(15000);
 //		} catch (InterruptedException e) {

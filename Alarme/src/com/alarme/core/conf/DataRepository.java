@@ -1,12 +1,8 @@
 package com.alarme.core.conf;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 import org.apache.log4j.Logger;
+
+import java.io.*;
 
 
 /**
@@ -23,7 +19,7 @@ public class DataRepository {
 	private static DataRepository	instance	= null;
 
 	private String					code		= "1234";			// Default secret code
-	private boolean					alarmEnabled		= true;			// Alarm is enabled by default
+	private boolean					alarmEnabled		= false;	// Alarm is disabled by default
 
 
 	/**
@@ -31,7 +27,7 @@ public class DataRepository {
 	 */
 	private DataRepository() {
 		reload();
-		// System.out.println("code is" + code);
+//		log.debug("SECRET CODE IS " + code);
 	}
 
 
@@ -61,16 +57,16 @@ public class DataRepository {
 			byte[] buf = new byte[16];
 			int iLen = s.read(buf);
 			//
-			if (iLen == 5) {
+			if (iLen > 1) {
 
-				byte[] codeBin = new byte[4];
+				byte[] codeBin = new byte[iLen-1];
 				//
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < iLen-1; i++) {
 					codeBin[i] = (byte) (buf[i] ^ 0xff);
 				}
 
 				code = new String(codeBin);
-				alarmEnabled = (buf[4] == 1);
+				alarmEnabled = (buf[iLen-1] == 1);
 			}
 			s.close();
 		}

@@ -1,19 +1,15 @@
 package com.alarme.app;
 
-import java.io.IOException;
-
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import org.apache.log4j.Logger;
-
 import com.alarme.core.IStateMachine;
 import com.alarme.core.StateMachine;
+import com.alarme.core.conf.ConfigRepository;
 import com.alarme.service.AdminManager;
 import com.alarme.service.MessageQueue;
 import com.alarme.service.MessageQueue.EMedia;
 import com.alarme.service.SignalManager;
+import org.apache.log4j.Logger;
+
+import javax.sound.sampled.AudioSystem;
 
 
 /**
@@ -31,7 +27,7 @@ public class Alarme {
 	 */
 	public static void main(String[] args) {
 		
-		MessageQueue.getInstance().createAndPushMessage("Systeme d'alarme en cours de lancement", "", EMedia.EMAIL);
+		MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Systeme d'alarme en cours de lancement", "", EMedia.EMAIL);
 		
 //		 Logger.log("Welcome to OpenCV " + Core.VERSION);
 //		 System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -40,7 +36,7 @@ public class Alarme {
 
 		if (AudioSystem.getMixer(null) == null) {
 			log.debug("AudioSystem Unavailable, exiting!");
-			MessageQueue.getInstance().createAndPushMessage("Systeme d'alarme arrete", "AudioSystem Unavailable, exiting!", EMedia.EMAIL);
+			MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Systeme d'alarme arrete", "AudioSystem Unavailable, exiting!", EMedia.EMAIL);
 			System.exit(-1);
 		}
 
@@ -68,7 +64,7 @@ public class Alarme {
 		// }
 
 		AdminManager.getInstance().stop();
-		MessageQueue.getInstance().createAndPushMessage("Systeme d'alarme arrete", "Thread terminated.", EMedia.EMAIL);
+		MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Systeme d'alarme arrete", "Thread terminated.", EMedia.EMAIL);
 		MessageQueue.getInstance().flush();
 		MessageQueue.getInstance().stopThread();
 		log.debug("Thread terminated.");

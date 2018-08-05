@@ -5,9 +5,13 @@ sensor.1=WINDOW, Fenetre Cuisine
 sensor.3=WINDOW, Fenetre Sejour gauche
 sensor.4=WINDOW, Fenetre Sejour droite
 
+# x starting from 0
+recipient.x.email=xxx
+recipient.x.sms.free.user=xxx
+recipient.x.sms.free.pass=xxx
 
-mail.recipients=xxx, yyy
-
+# See http://mobile.free.fr for more information
+sms.url.free=xxx
 
 # Comment the next line to disable e-mail & SMS support
 mail.smtp.user=xxx
@@ -21,5 +25,3 @@ mail.smtp.starttls.enable=true
 mail.smtp.host=smtp.gmail.com
 mail.smtp.port=587
 
-google.client.id=xxx
-google.client.secret=xxx

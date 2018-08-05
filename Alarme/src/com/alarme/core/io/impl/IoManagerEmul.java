@@ -2,9 +2,11 @@ package com.alarme.core.io.impl;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import com.alarme.core.conf.RecipientInfo;
 import org.apache.log4j.Logger;
 
 import com.alarme.core.conf.ConfigRepository;
@@ -48,7 +50,6 @@ public class IoManagerEmul implements IIoManager {
 
 	/**
 	 * 
-	 * @param input
 	 * @return
 	 */
 	private boolean managePasswordRequestedCode() {
@@ -58,7 +59,7 @@ public class IoManagerEmul implements IIoManager {
 			Signal.BIPBIP_1320.start();
 			Properties props = ConfigRepository.getInstance().getProperties();
 			MessageQueue.getInstance().createAndPushMessageTo(
-					passwordRequestedEmail, "RE : PWD",
+					Arrays.asList(new RecipientInfo(passwordRequestedEmail, null, null)), "RE : PWD",
 					props.getProperty(ConfigRepository.KEY_MAIL_PASS),
 					EMedia.EMAIL);
 			passwordRequestedCode = null;

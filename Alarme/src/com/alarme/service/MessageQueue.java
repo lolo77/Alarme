@@ -1,24 +1,16 @@
 package com.alarme.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.*;
+import com.alarme.core.conf.ConfigRepository;
+import com.alarme.core.conf.RecipientInfo;
+import com.alarme.service.SmsSender.SmsException;
+import org.apache.log4j.Logger;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-
-import org.apache.log4j.Logger;
-
-import com.alarme.core.conf.ConfigRepository;
-import com.alarme.service.SmsSender.SmsException;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.*;
 
 /**
  * @author ffradet
@@ -42,22 +34,23 @@ public class MessageQueue implements Runnable {
         private static final long serialVersionUID = -8368356579883182140L;
 
         private EMedia media;
-        private String emailAddressTo;
+
+
+
+        private List<RecipientInfo> lstRecipients;
         private String msgSubject;
         private String msgText;
         private String[] files;
         private long time;
 
         /**
-         * @param emailAddressTo
          * @param msgSubject
          * @param msgText
          * @param files
          */
-        public MessageContent(String emailAddressTo, String msgSubject,
-                              String msgText, String[] files, long time, EMedia media) {
+        public MessageContent(List<RecipientInfo> lstRecipients, String msgSubject, String msgText, String[] files, long time, EMedia media) {
             super();
-            this.emailAddressTo = emailAddressTo;
+            this.lstRecipients = lstRecipients;
             this.msgSubject = msgSubject;
             this.msgText = msgText;
             this.files = files;
@@ -69,8 +62,8 @@ public class MessageQueue implements Runnable {
             return time;
         }
 
-        public String getEmailAddressTo() {
-            return emailAddressTo;
+        public List<RecipientInfo> getRecipients() {
+            return lstRecipients;
         }
 
         public String getMsgSubject() {
@@ -91,8 +84,7 @@ public class MessageQueue implements Runnable {
 
         @Override
         public String toString() {
-            return "MessageContent [media=" + media + ", emailAddressTo="
-                    + emailAddressTo + ", msgSubject=" + msgSubject
+            return "MessageContent [media=" + media + ", msgSubject=" + msgSubject + ", recipients.size=" + ((lstRecipients != null) ? lstRecipients.size() : "N/A")
                     + ", msgText=" + msgText + ", files="
                     + Arrays.toString(files) + ", time=" + time + "]";
         }
@@ -262,7 +254,6 @@ public class MessageQueue implements Runnable {
     /**
      *
      */
-    @SuppressWarnings("unchecked")
     private void readCache() {
         log.debug("readCache");
         File f = new File(CACHE_PATH);
@@ -309,6 +300,7 @@ public class MessageQueue implements Runnable {
                 iter.remove();
             } catch (SmsException e) {
                 log.debug("sendPendingMessages SMS : " + e.getMessage());
+                iter.remove();
             } catch (MessagingException e) {
                 log.error("SMTP error : ", e);
                 // Stop sending : IO problem
@@ -345,27 +337,24 @@ public class MessageQueue implements Runnable {
      * @param msgText
      * @param files
      */
-    public void createAndPushMessage(String msgSubject, String msgText,
+    public void createAndPushMessage(List<RecipientInfo> lstRecipients, String msgSubject, String msgText,
                                         EMedia media, String... files) {
         log.debug("createAndPushMessage");
         ConfigRepository conf = ConfigRepository.getInstance();
-        createAndPushMessageTo(conf.getProperties()
-                        .getProperty(ConfigRepository.KEY_MAIL_RECIPIENTS), msgSubject + " " + ip + " ",
+        createAndPushMessageTo(lstRecipients, msgSubject + " " + ip + " ",
                 msgText, media, files);
         log.debug("createAndPushMessage END");
     }
 
     /**
-     * @param emailAddressTo
      * @param msgSubject
      * @param msgText
      * @param files
      */
-    public void createAndPushMessageTo(String emailAddressTo,
-                                          String msgSubject, String msgText, EMedia media, String... files) {
+    public void createAndPushMessageTo(List<RecipientInfo> lstRecipients, String msgSubject, String msgText, EMedia media, String... files) {
         log.debug("createAndPushMessageTo");
 
-        MessageContent msg = new MessageContent(emailAddressTo, msgSubject,
+        MessageContent msg = new MessageContent(lstRecipients, msgSubject,
                 msgText, files, System.currentTimeMillis(), media);
         pushMessage(msg);
 
@@ -384,11 +373,11 @@ public class MessageQueue implements Runnable {
                 || (msg.getMedia().equals(EMedia.BOTH))) {
             JavaEmailSender.getInstance().sendEmailMessage(msg);
         }
-        //
-        if ((msg.getMedia().equals(EMedia.SMS))
+        // 27/06/2015 - Google will not support anymore SMS sending
+/*        if ((msg.getMedia().equals(EMedia.SMS))
                 || (msg.getMedia().equals(EMedia.BOTH))) {
             SmsSender.getInstance().sendSmsMessage(msg);
         }
-        log.debug("sendMessage END");
+*/        log.debug("sendMessage END");
     }
 }
