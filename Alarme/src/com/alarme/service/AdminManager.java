@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -211,8 +212,6 @@ public class AdminManager implements Runnable {
 			log.warn("Sender " + sender + " not recognized as regular user for action manageEmail.");
 			return;
 		}
-/*
-		Properties props = ConfigRepository.getInstance().getProperties();
 
 		String sAdd = p.getProperty(AdminActions.Email.PARAM_ADD);
 		String sRem = p.getProperty(AdminActions.Email.PARAM_REMOVE);
@@ -220,54 +219,40 @@ public class AdminManager implements Runnable {
 
 		boolean bList = false;
 
+		List<String> lstCur = new ArrayList<>();
+		for (RecipientInfo r : ConfigRepository.getInstance().getRecipients()) {
+			lstCur.add(r.getEmail());
+		}
+
 		// Add mail recipients (comma-separated)
 		if ((sAdd != null) && (!sAdd.isEmpty())) {
-			String cur = props
-					.getProperty(ConfigRepository.KEY_MAIL_RECIPIENTS);
-			List<String> lstCur = new ArrayList<String>(Arrays.asList(cur
-					.split("\\s*,\\s*")));
+
 			String[] tabAdd = sAdd.split("\\s*,\\s*");
 			for (String s : tabAdd) {
 				if (!lstCur.contains(s)) {
 					lstCur.add(s);
-					MessageQueue.getInstance().createAndPushMessageTo(s, "EMAIL", "Votre adresse a été ajoutée à la liste des destinataires.",
+					RecipientInfo ri = new RecipientInfo(s, null, null);
+					ConfigRepository.getInstance().getRecipients().add(ri);
+					MessageQueue.getInstance().createAndPushMessageTo(Arrays.asList(ri), "EMAIL", "Votre adresse a été ajoutée à la liste des destinataires.",
 							EMedia.EMAIL);
 				}
 			}
-			cur = "";
-			for (String s : lstCur) {
-				if (!cur.isEmpty()) {
-					cur += ", ";
-				}
-				cur += s;
-			}
-			props.setProperty(ConfigRepository.KEY_MAIL_RECIPIENTS, cur);
+
 			bList = true;
 		}
 
 		// Remove mail recipients (comma-separated)
 		if ((sRem != null) && (!sRem.isEmpty())) {
-			String cur = props
-					.getProperty(ConfigRepository.KEY_MAIL_RECIPIENTS);
-			String[] tabCur = cur.split("\\s*,\\s*");
-			List<String> lstCur = new ArrayList<String>(Arrays.asList(tabCur));
 			String[] tabRem = sRem.split("\\s*,\\s*");
 			for (String s : tabRem) {
 				int i = lstCur.indexOf(s);
 				if (i >= 0) {
 					lstCur.remove(i);
-					MessageQueue.getInstance().createAndPushMessageTo(s, "EMAIL", "Votre adresse a été retirée de la liste des destinataires.",
+					RecipientInfo ri = new RecipientInfo(s, null, null);
+					MessageQueue.getInstance().createAndPushMessageTo(Arrays.asList(ri), "EMAIL", "Votre adresse a été retirée de la liste des destinataires.",
 							EMedia.EMAIL);
 				}
 			}
-			cur = "";
-			for (String s : lstCur) {
-				if (!cur.isEmpty()) {
-					cur += ", ";
-				}
-				cur += s;
-			}
-			props.setProperty(ConfigRepository.KEY_MAIL_RECIPIENTS, cur);
 			bList = true;
 		}
 
@@ -277,12 +262,17 @@ public class AdminManager implements Runnable {
 
 		// List mail recipients (comma-separated)
 		if ((bList) || ((sLst != null) && (!sLst.isEmpty()))) {
-			String cur = props
-					.getProperty(ConfigRepository.KEY_MAIL_RECIPIENTS);
-			MessageQueue.getInstance().createAndPushMessageTo(sender, "RE : EMAIL", cur,
+			StringBuffer sb = new StringBuffer();
+			for (String email : lstCur) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(email);
+			}
+			MessageQueue.getInstance().createAndPushMessageTo(Arrays.asList(senderUser), "RE : EMAIL", sb.toString(),
 					EMedia.EMAIL);
 		}
-*/
+
 	}
 
 	/**
@@ -348,7 +338,7 @@ public class AdminManager implements Runnable {
 				.valueOf((int) (Math.random() * 9000 + 1000)) + "#";
 		log.debug("s = "  + s);
 		try {
-			log.debug("URL Encode = " + URLEncoder.encode("été", "UTF-8"));
+			System.out.print("URL Encode = " + URLEncoder.encode("été", "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 
 		}

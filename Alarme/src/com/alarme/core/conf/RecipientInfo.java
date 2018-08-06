@@ -24,4 +24,20 @@ public class RecipientInfo {
         return smsFreePass;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RecipientInfo)) return false;
+
+        RecipientInfo that = (RecipientInfo) o;
+
+        if (!email.equals(that.email)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return email.hashCode();
+    }
 }

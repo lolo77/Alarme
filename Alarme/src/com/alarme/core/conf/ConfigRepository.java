@@ -68,6 +68,7 @@ public class ConfigRepository {
 		//
 		try {
 			props.load(new FileInputStream(f));
+			getRecipients();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -95,7 +96,33 @@ public class ConfigRepository {
 	}
 
 
-	public RecipientInfo getRecipientInfo(int num) {
+	private void putRecipientsToProps() {
+		int i = 0;
+		RecipientInfo r = null;
+		// Clear all old recipient info
+		while ((r = getRecipientInfo(i)) != null)
+		{
+			String key = KEY_RECIPIENT_PREFIX + Integer.toString(i);
+			props.setProperty(key + KEY_RECIPIENT_EMAIL_SUFFIX, null);
+			props.setProperty(key + KEY_RECIPIENT_SMS_FREE_USER_SUFFIX, null);
+			props.setProperty(key + KEY_RECIPIENT_SMS_FREE_PASS_SUFFIX, null);
+			i++;
+		}
+
+		// Put all recipient info
+		i = 0;
+		for (RecipientInfo ri : lstRecipients) {
+			String key = KEY_RECIPIENT_PREFIX + Integer.toString(i);
+			props.setProperty(key + KEY_RECIPIENT_EMAIL_SUFFIX, ri.getEmail());
+			props.setProperty(key + KEY_RECIPIENT_SMS_FREE_USER_SUFFIX, ri.getSmsFreeUser());
+			props.setProperty(key + KEY_RECIPIENT_SMS_FREE_PASS_SUFFIX, ri.getSmsFreePass());
+			i++;
+		}
+
+	}
+
+
+	private RecipientInfo getRecipientInfo(int num) {
 		String email = props.getProperty(KEY_RECIPIENT_PREFIX + Integer.toString(num) + KEY_RECIPIENT_EMAIL_SUFFIX);
 		if (email == null) {
 			return null;
@@ -105,6 +132,7 @@ public class ConfigRepository {
 		RecipientInfo out = new RecipientInfo(email, smsFreeUser, smsFreePass);
 		return out;
 	}
+
 
 	public ArrayList<RecipientInfo> getRecipients() {
 		if (lstRecipients == null) {
@@ -133,6 +161,7 @@ public class ConfigRepository {
 	 * 
 	 */
 	public void save() {
+		putRecipientsToProps();
 		File f = new File(PROPS_PATH);
 		try {
 			props.store(new FileOutputStream(f), "");
