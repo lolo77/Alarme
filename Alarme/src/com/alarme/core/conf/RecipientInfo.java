@@ -1,6 +1,8 @@
 package com.alarme.core.conf;
 
-public class RecipientInfo {
+import java.io.Serializable;
+
+public class RecipientInfo implements Serializable {
 
     private String email;
     private String smsFreeUser;

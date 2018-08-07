@@ -36,7 +36,7 @@ public class ConfigRepository {
 	private Properties				props		= null;
 
 	private static ConfigRepository	instance;
-	private ArrayList<RecipientInfo> lstRecipients = null;
+	private ArrayList<RecipientInfo> lstRecipients = new ArrayList<RecipientInfo>();
 
 
 	/**
@@ -62,7 +62,7 @@ public class ConfigRepository {
 	 */
 	private void reload() {
 		log.debug("ConfigRepository.reload");
-		
+		log.debug("Current path is : " + new File(".").getAbsolutePath());
 		File f = new File(PROPS_PATH);
 		props = new Properties();
 		//
@@ -97,6 +97,10 @@ public class ConfigRepository {
 
 
 	private void putRecipientsToProps() {
+		if (!isLoaded()) {
+			return;
+		}
+
 		int i = 0;
 		RecipientInfo r = null;
 		// Clear all old recipient info
@@ -123,6 +127,10 @@ public class ConfigRepository {
 
 
 	private RecipientInfo getRecipientInfo(int num) {
+		if (!isLoaded()) {
+			return null;
+		}
+
 		String email = props.getProperty(KEY_RECIPIENT_PREFIX + Integer.toString(num) + KEY_RECIPIENT_EMAIL_SUFFIX);
 		if (email == null) {
 			return null;
@@ -135,8 +143,8 @@ public class ConfigRepository {
 
 
 	public ArrayList<RecipientInfo> getRecipients() {
-		if (lstRecipients == null) {
-			lstRecipients = new ArrayList<RecipientInfo>();
+
+		if (lstRecipients.size() == 0) {
 			int i = 0;
 			RecipientInfo r;
 			while ((r = getRecipientInfo(i)) != null)
@@ -161,6 +169,10 @@ public class ConfigRepository {
 	 * 
 	 */
 	public void save() {
+		if (!isLoaded()) {
+			return;
+		}
+
 		putRecipientsToProps();
 		File f = new File(PROPS_PATH);
 		try {

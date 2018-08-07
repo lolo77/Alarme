@@ -85,7 +85,7 @@ public class StateMachine implements IStateMachine {
 		
 		// To allow add / remove while iterating over the collection (changes
 		// will take effect at the next run cycle)
-		List<IState> backList = new ArrayList<IState>(lstStates.size());
+		List<IState> backList = new ArrayList<>(lstStates.size());
 		backList.addAll(lstStates);
 		//
 		for (IState state : backList) {
