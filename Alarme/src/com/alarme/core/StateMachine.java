@@ -3,7 +3,7 @@ package com.alarme.core;
 import com.alarme.core.conf.ConfigRepository;
 import com.alarme.core.io.IIoManager;
 import com.alarme.core.io.NetWatchDog;
-import com.alarme.core.io.impl.IoManagerEmul;
+import com.alarme.core.io.impl.IoManagerRpi;
 import com.alarme.service.MessageQueue;
 import com.alarme.service.MessageQueue.EMedia;
 import com.alarme.state.IState;
@@ -24,7 +24,7 @@ public class StateMachine implements IStateMachine {
 
 	private static final Logger log = Logger.getLogger(StateMachine.class);
 	
-	private IIoManager		ioManager       = new IoManagerEmul();
+	private IIoManager		ioManager       = new IoManagerRpi();
 	
 	private List<IState>	lstStates		= new ArrayList<>();
 	private IState			currentState;

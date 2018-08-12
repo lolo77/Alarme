@@ -64,6 +64,7 @@ public class JavaEmailSender {
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", propsConfig.getProperty(ConfigRepository.KEY_MAIL_AUTH));
 		props.put("mail.smtp.starttls.enable", propsConfig.getProperty(ConfigRepository.KEY_MAIL_TLS_ENABLE));
+		props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 		props.put("mail.smtp.host", propsConfig.getProperty(ConfigRepository.KEY_MAIL_HOST));
 		props.put("mail.smtp.port", propsConfig.getProperty(ConfigRepository.KEY_MAIL_PORT));
 
