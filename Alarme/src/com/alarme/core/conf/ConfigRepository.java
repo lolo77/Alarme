@@ -149,6 +149,7 @@ public class ConfigRepository {
 			RecipientInfo r;
 			while ((r = getRecipientInfo(i)) != null)
 			{
+				log.debug("Recipient #" + i + " = " + r.toString());
 				lstRecipients.add(r);
 				i++;
 			}

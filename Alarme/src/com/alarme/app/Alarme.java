@@ -27,8 +27,9 @@ public class Alarme {
 	 */
 	public static void main(String[] args) {
 		
-		MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Systeme d'alarme en cours de lancement", "", EMedia.EMAIL);
-		
+		MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Systeme d'alarme en cours de lancement", "", EMedia.BOTH);
+
+		/*
 //		 Logger.log("Welcome to OpenCV " + Core.VERSION);
 //		 System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 //		 Mat m = Mat.eye(3, 3, CvType.CV_8UC1);
@@ -67,6 +68,6 @@ public class Alarme {
 		MessageQueue.getInstance().createAndPushMessage(ConfigRepository.getInstance().getRecipients(), "Systeme d'alarme arrete", "Thread terminated.", EMedia.EMAIL);
 		MessageQueue.getInstance().flush();
 		MessageQueue.getInstance().stopThread();
-		log.debug("Thread terminated.");
+		log.debug("Thread terminated.");*/
 	}
 }

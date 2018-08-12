@@ -203,7 +203,7 @@ public class StateMachine implements IStateMachine {
 
 	@Override
 	public boolean isTerminated() {
-		return lstStates.isEmpty();
+		return (lstStates.isEmpty()) || (ioManager.getKeyboardInput().equals("q"));
 	}
 	
 	

@@ -42,4 +42,13 @@ public class RecipientInfo implements Serializable {
     public int hashCode() {
         return email.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "RecipientInfo{" +
+                "email='" + email + '\'' +
+                ", smsFreeUser='" + smsFreeUser + '\'' +
+                ", smsFreePass='" + smsFreePass + '\'' +
+                '}';
+    }
 }

@@ -223,7 +223,8 @@ public class MessageQueue implements Runnable {
      * @param msg
      */
     private void pushMessage(MessageContent msg) {
-        log.debug("Email to be pushed : " + msg.getMsgSubject());
+        log.debug("Email to be pushed Subject : " + msg.getMsgSubject());
+        log.debug("Email to be pushed Body    : " + msg.getMsgText());
         lstCache.add(msg);
         writeCache();
         log.debug("Email pushed");
@@ -373,11 +374,10 @@ public class MessageQueue implements Runnable {
                 || (msg.getMedia().equals(EMedia.BOTH))) {
             JavaEmailSender.getInstance().sendEmailMessage(msg);
         }
-        // 27/06/2015 - Google will not support anymore SMS sending
-/*        if ((msg.getMedia().equals(EMedia.SMS))
+        if ((msg.getMedia().equals(EMedia.SMS))
                 || (msg.getMedia().equals(EMedia.BOTH))) {
             SmsSender.getInstance().sendSmsMessage(msg);
         }
-*/        log.debug("sendMessage END");
+        log.debug("sendMessage END");
     }
 }

@@ -27,7 +27,7 @@ public class DataRepository {
 	 */
 	private DataRepository() {
 		reload();
-//		log.debug("SECRET CODE IS " + code);
+		log.debug("SECRET CODE IS " + code);
 	}
 
 

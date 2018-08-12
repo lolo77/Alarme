@@ -5,9 +5,12 @@ import com.alarme.core.conf.RecipientInfo;
 import com.alarme.service.MessageQueue.MessageContent;
 import org.apache.log4j.Logger;
 
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.stream.Collectors;
 
 
 /**
@@ -86,10 +89,19 @@ public class SmsSender {
 						  String url = ConfigRepository.getInstance().getProperties().getProperty(ConfigRepository.KEY_SMS_URL_FREE);
 						  url = url.replace("{0}", r.getSmsFreeUser());
 						  url = url.replace("{1}", r.getSmsFreePass());
-						  url = url.replace("{2}", URLEncoder.encode(msg.getMsgText(), "UTF-8"));
+						  url = url.replace("{2}", URLEncoder.encode(msg.getMsgSubject() + "\r\n" + msg.getMsgText(), "UTF-8"));
 						  URL smsService = new URL(url);
 						  log.debug("Sending SMS to " + r.getSmsFreeUser() + " (" + r.getEmail() + ")");
-						  smsService.openConnection();
+						  HttpURLConnection conn = (HttpURLConnection)smsService.openConnection();
+						  InputStream is = conn.getInputStream();
+						  String result = new BufferedReader(new InputStreamReader(is))
+								  .lines().collect(Collectors.joining("\n"));
+						  log.debug("Retour service FREE : Content = [" + result + "]");
+						  int rc = conn.getResponseCode();
+						  log.debug("Retour service FREE : HTTP Response Code = [" + rc + "]");
+						  if (rc != 200) {
+							  log.error("SMS not sent.");
+						  }
 					  }
 				  }
 				  log.debug("Message SMS sent successfully : " + msg);
